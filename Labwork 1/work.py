@@ -39,12 +39,35 @@ def remove(table):
     if not remove_flag:
         print "Nothing to remove\n"
     else:
-        print "Record(s) removed\n"
+        print "Record(s) has been removed\n"
     return new_table
 
 
-def edit():
-    print "Here record is edited\n"
+def edit(table):
+    print "Type (T) or article (A) to edit?\nTypes are edited with all relative articles!"
+    ch = ''
+    while ch not in ['T', 'A']:
+        ch = str(raw_input()).capitalize()
+    print "Name of type/article to edit: ",
+    edit_name = str(raw_input())
+    old_name = new_name = ""
+    for x in table:
+        if x['name'] == edit_name:
+            old_name = x['name']
+            for key in x.keys():
+                print("%s: " % key.capitalize()),
+                x[key] = str(raw_input())
+            new_name = x['name']
+            break
+    if old_name == new_name == "":
+        print "Nothing to edit\n"
+        return table
+    if ch == 'T':
+        for x in table:
+            if x.has_key('type') and x['type'] == old_name:
+                x['type'] = new_name
+    print "Record(s) has been edited\n"
+    return table
 
 
 def filter():

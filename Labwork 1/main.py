@@ -27,7 +27,7 @@ while 1:
     elif ch == '3':
         table = work.remove(table)
     elif ch == '4':
-        work.edit()
+        table = work.edit(table)
     elif ch == '5':
         work.filter()
     else:
