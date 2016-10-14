@@ -71,7 +71,6 @@ def edit(table):
 
 
 def filtrate(table):
-    #print "Here is record search\n"
     if not table:
         print "Nothing to filter\n"
         return table
