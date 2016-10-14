@@ -70,5 +70,20 @@ def edit(table):
     return table
 
 
-def filter():
-    print "Here is record search\n"
+def filtrate(table):
+    #print "Here is record search\n"
+    if not table:
+        print "Nothing to filter\n"
+        return table
+    res_list = []
+    for x in table:
+        if x.has_key('type') and float(x['price']) > 10.0 and x['type'] not in res_list:
+            res_list.append(x['type'])
+    if res_list:
+        print "Article types where minimal price is more than 10.00:"
+        for x in res_list:
+            print("* %s" % x)
+        print ""
+    else:
+        print "No appropriate article types\n"
+    return table

@@ -29,7 +29,7 @@ while 1:
     elif ch == '4':
         table = work.edit(table)
     elif ch == '5':
-        work.filter()
+        work.filtrate(table)
     else:
         f = open(filename, 'wb')
         pickle.dump(table, f)
