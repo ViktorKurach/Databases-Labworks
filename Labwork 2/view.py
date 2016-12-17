@@ -5,10 +5,15 @@ class Menu:
     database = db.Database()
 
     def show_menu(self):
-        print "1. Show albums\n2. Add new album\n3. Edit album\n4. Delete album\n5. Search\n6. Exit"
+        print "1. Show albums\n2. Add new album\n3. Edit album\n4. Delete album\n5. Search\n\
+6. Parse data from .json file\n7. Exit"
 
     def show_albums(self):
-        for x in self.database.show_albums():
+        albums_list = self.database.show_albums()
+        if not albums_list:
+            print "No albums yet\n"
+            return
+        for x in albums_list:
             print "Artist: %s" % (x[0])
             print "Album name: %s" % (x[1])
             print "Year: %s" % (x[2])
@@ -47,3 +52,9 @@ class Menu:
 
     def search(self):
         print "Here will be the search\n"
+
+    def parse_json(self):
+        print "All albums will be deleted. Press any key to continue"
+        raw_input()
+        if self.database.parse_json() == 0:
+            print "Data parsed successfully!\n"

@@ -1,0 +1,37 @@
+{
+  "Database": "Music",
+  "Genre": [
+    {
+      "Name": "Dark Folk",
+      "Style": "Rock"
+    },
+    {
+      "Name": "Ethereal",
+      "Style": "Electronic"
+    }
+  ],
+  "Artist": [
+    {
+      "Name": "Dead Can Dance",
+      "Genre": "Ethereal",
+      "Country": "Australia"
+    },
+    {
+      "Name": "Sonne Hagal",
+      "Genre": "Dark Folk",
+      "Country": "Germany"
+    }
+  ],
+  "Label": [
+    {
+      "Name": "4AD",
+      "Country": "England",
+      "Since": 1980
+    },
+    {
+      "Name": "Luftschutz Ent.",
+      "Country": "Germany",
+      "Since": 2005
+    }
+  ]
+}

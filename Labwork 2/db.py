@@ -1,4 +1,5 @@
 import MySQLdb
+import json
 
 
 class Database:
@@ -44,6 +45,27 @@ class Database:
         self.cursor.execute("delete from album where (name = '" + album + "')\
         and (artist_id = " + str(artist_id) + ")")
         self.connection.commit()
+        return 0
+
+    def parse_json(self):
+        f = open("music.json", "rb")
+        data = json.loads(f.read())
+        f.close()
+        self.clean_database()
+        for x in data["Genre"]:
+            style, genre_name = x["Style"], x["Name"]
+            self.cursor.execute("insert into genre (name, style) values ('"+genre_name+"', '"+style+"')")
+            self.connection.commit()
+        for x in data["Artist"]:
+            artist_name, country, genre_id = x["Name"], x["Country"], self.get_genre_id(x["Genre"])
+            self.cursor.execute("insert into artist (name, country, genre_id)\
+            values ('" + artist_name + "', '" + country + "', "+str(genre_id)+")")
+            self.connection.commit()
+        for x in data["Label"]:
+            label_name, country, since = x["Name"], x["Country"], x["Since"]
+            self.cursor.execute("insert into label (name, country, since)\
+            values ('" + label_name + "', '" + country + "', "+str(since)+")")
+            self.connection.commit()
         return 0
 
     def get_genre_id(self, genre):
@@ -92,3 +114,10 @@ class Database:
         for x in self.cursor.fetchall():
             if label == x[1]:
                 return x[0]
+
+    def clean_database(self):
+        self.cursor.execute("delete from genre")
+        self.cursor.execute("delete from artist")
+        self.cursor.execute("delete from label")
+        self.cursor.execute("delete from album")
+        self.connection.commit()
