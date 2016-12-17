@@ -19,31 +19,34 @@ class Database:
         where (album.artist_id = artist.artist_id)\
             and (artist.genre_id = genre.genre_id)\
             and (album.label_id = label.label_id);")
-        for x in self.cursor.fetchall():
-            print "Artist: %s" % (x[0])
-            print "Album name: %s" % (x[1])
-            print "Year: %s" % (x[2])
-            print "Genre: %s" % (x[3])
-            print "Tracks: %s" % (x[4])
-            print "Duration: %s" % (x[5])
-            print "Label: %s\n" % (x[6])
+        return self.cursor.fetchall()
 
-    def add_album(self):
-        artist = str(raw_input("Artist: "))
-        album_name = str(raw_input("Album name: "))
-        year = int(raw_input("Year: "))
-        genre = str(raw_input("Genre: "))
-        tracks = int(raw_input("Tracks: "))
-        duration = str(raw_input("Duration (HH:MM:SS): "))
-        label = str(raw_input("Label: "))
-        artist_id, genre_id, label_id = self.artist_id(artist, genre), self.genre_id(genre), self.label_id(label)
+    def add_album(self, artist, album, year, genre, tracks, duration, label):
+        artist_id = self.get_artist_id(artist, genre)
+        label_id = self.get_label_id(label)
         self.cursor.execute("insert into album (artist_id, label_id, name, year, tracks, duration)\
-         values ("+str(artist_id)+", "+str(label_id)+", '"+album_name+"', "+str(year)+", "+str(tracks)+",\
+         values ("+str(artist_id)+", "+str(label_id)+", '"+album+"', "+str(year)+", "+str(tracks)+",\
         '"+duration+"')")
         self.connection.commit()
-        print "Album added successfully!\n"
+        return 0
 
-    def genre_id(self, genre):
+    def delete_album(self, artist, album, genre):
+        self.cursor.execute("select album.name, artist.name, genre.name from album, artist, genre\
+                where (album.artist_id = artist.artist_id) and (artist.genre_id = genre.genre_id)")
+        exists = 0
+        for x in self.cursor.fetchall():
+            if artist == x[1] and album == x[0]:
+                exists = 1
+                break
+        if exists == 0:
+            return -1
+        artist_id = self.get_artist_id(artist, genre)
+        self.cursor.execute("delete from album where (name = '" + album + "')\
+        and (artist_id = " + str(artist_id) + ")")
+        self.connection.commit()
+        return 0
+
+    def get_genre_id(self, genre):
         self.cursor.execute("select name from genre")
         exists = 0
         for x in self.cursor.fetchall():
@@ -58,7 +61,7 @@ class Database:
             if genre == x[1]:
                 return x[0]
 
-    def artist_id(self, artist, genre):
+    def get_artist_id(self, artist, genre):
         self.cursor.execute("select name from artist")
         exists = 0
         for x in self.cursor.fetchall():
@@ -66,7 +69,7 @@ class Database:
                 exists = 1
                 break
         if exists == 0:
-            genre_id = self.genre_id(genre)
+            genre_id = self.get_genre_id(genre)
             self.cursor.execute("insert into artist (name, genre_id)\
                 values ('" + artist + "', " + str(genre_id) + ")")
             self.connection.commit()
@@ -75,7 +78,7 @@ class Database:
             if artist == x[1]:
                 return x[0]
 
-    def label_id(self, label):
+    def get_label_id(self, label):
         self.cursor.execute("select name from label")
         exists = 0
         for x in self.cursor.fetchall():
@@ -89,12 +92,3 @@ class Database:
         for x in self.cursor.fetchall():
             if label == x[1]:
                 return x[0]
-
-    def edit_album(self):
-        print "Here album is edited"
-
-    def delete_album(self):
-        print "Here album is deleted"
-
-    def search(self):
-        print "Here is a search"
