@@ -67,7 +67,6 @@ class Menu:
     def attribute_search(self):
         print "Search album by artist (A), genre (G), year (Y), label (L), country (C)"
         attr = ""
-        result = None
         while attr not in ["A", "G", "Y", "L", "C"]:
             attr = str(raw_input()).capitalize()
         if attr == "A":
