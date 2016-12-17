@@ -16,7 +16,7 @@ while 1:
     elif task == '4':
         menu.delete_album()
     elif task == '5':
-        menu.search()
+        menu.full_text_search()
     elif task == '6':
         menu.parse_json()
     else:

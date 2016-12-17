@@ -14,8 +14,9 @@ class Database:
         self.connection.close()
 
     def show_albums(self):
-        self.cursor.execute("select artist.name, album.name, album.year,\
-        genre.name, album.tracks, album.duration, label.name\
+        self.cursor.execute("select artist.name as Artist, album.name as Album,\
+        album.year as Year, genre.name as Genre, album.tracks as Tracks,\
+        album.duration as Duration, label.name as Label\
         from album, artist, genre, label\
         where (album.artist_id = artist.artist_id)\
             and (artist.genre_id = genre.genre_id)\
@@ -67,6 +68,22 @@ class Database:
             values ('" + label_name + "', '" + country + "', "+str(since)+")")
             self.connection.commit()
         return 0
+
+    def full_text_search(self, phrase, without=""):
+        query = "select artist.name as Artist, s.name as Album,\
+            s.year as Year, genre.name as Genre, s.tracks as Tracks,\
+            s.duration as Duration, label.name as Label\
+            from artist inner join\
+            (select * from album where match (name)\
+            against ('+\""+phrase+"\""
+        if without != "":
+            query += " -"+without
+        query += "' in boolean mode)) s\
+            on (s.artist_id = artist.artist_id)\
+            inner join genre on (artist.genre_id = genre.genre_id)\
+            inner join label on (label.label_id = s.label_id)"
+        self.cursor.execute(query)
+        return self.cursor.fetchall()
 
     def get_genre_id(self, genre):
         self.cursor.execute("select name from genre")

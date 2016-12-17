@@ -5,22 +5,22 @@ class Menu:
     database = db.Database()
 
     def show_menu(self):
-        print "1. Show albums\n2. Add new album\n3. Edit album\n4. Delete album\n5. Search\n\
+        print "1. Show albums\n2. Add new album\n3. Edit album\n4. Delete album\n5. Search album\n\
 6. Parse data from .json file\n7. Exit"
 
     def show_albums(self):
         albums_list = self.database.show_albums()
+        print ""
         if not albums_list:
             print "No albums yet\n"
-            return
         for x in albums_list:
-            print "Artist: %s" % (x[0])
-            print "Album name: %s" % (x[1])
-            print "Year: %s" % (x[2])
-            print "Genre: %s" % (x[3])
-            print "Tracks: %s" % (x[4])
-            print "Duration: %s" % (x[5])
-            print "Label: %s\n" % (x[6])
+            print "Artist: %s" % x[0]
+            print "Album name: %s" % x[1]
+            print "Year: %s" % x[2]
+            print "Genre: %s" % x[3]
+            print "Tracks: %s" % x[4]
+            print "Duration: %s" % x[5]
+            print "Label: %s\n" % x[6]
 
     def add_album(self, p=1):
         artist = str(raw_input("Artist: "))
@@ -50,11 +50,25 @@ class Menu:
             print "Album deleted successfully!\n"
         return res
 
-    def search(self):
-        print "Here will be the search\n"
+    def full_text_search(self):
+        phrase = str(raw_input("Search a phrase: "))
+        without = str(raw_input("Search without (optional): "))
+        result = self.database.full_text_search(phrase, without)
+        print ""
+        if not result:
+            print "No albums found\n"
+        for x in result:
+            print "Artist: %s" % x[0]
+            print "Album name: %s" % x[1]
+            print "Year: %s" % x[2]
+            print "Genre: %s" % x[3]
+            print "Tracks: %s" % x[4]
+            print "Duration: %s" % x[5]
+            print "Label: %s\n" % x[6]
 
     def parse_json(self):
-        print "All albums will be deleted. Press any key to continue"
-        raw_input()
+        print "All albums will be deleted!\nPress X to cancel or any other key to continue"
+        if str(raw_input()).capitalize() == 'X':
+            return
         if self.database.parse_json() == 0:
             print "Data parsed successfully!\n"
