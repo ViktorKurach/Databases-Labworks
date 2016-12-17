@@ -14,9 +14,9 @@ class Database:
         self.connection.close()
 
     def show_albums(self):
-        self.cursor.execute("select artist.name as Artist, album.name as Album,\
-        album.year as Year, genre.name as Genre, album.tracks as Tracks,\
-        album.duration as Duration, label.name as Label\
+        self.cursor.execute("select artist.name, album.name,\
+        album.year, genre.name, album.tracks,\
+        album.duration, label.name, artist.country\
         from album, artist, genre, label\
         where (album.artist_id = artist.artist_id)\
             and (artist.genre_id = genre.genre_id)\
@@ -70,9 +70,9 @@ class Database:
         return 0
 
     def full_text_search(self, phrase, without=""):
-        query = "select artist.name as Artist, s.name as Album,\
-            s.year as Year, genre.name as Genre, s.tracks as Tracks,\
-            s.duration as Duration, label.name as Label\
+        query = "select artist.name, s.name,\
+            s.year, genre.name, s.tracks,\
+            s.duration, label.name, artist.country\
             from artist inner join\
             (select * from album where match (name)\
             against ('+\""+phrase+"\""
@@ -83,6 +83,61 @@ class Database:
             inner join genre on (artist.genre_id = genre.genre_id)\
             inner join label on (label.label_id = s.label_id)"
         self.cursor.execute(query)
+        return self.cursor.fetchall()
+
+    def search_by_artist(self, artist):
+        self.cursor.execute("select artist.name, album.name,\
+        album.year, genre.name, album.tracks,\
+        album.duration, label.name, artist.country\
+        from album, artist, genre, label\
+        where (album.artist_id = artist.artist_id)\
+            and (artist.genre_id = genre.genre_id)\
+            and (album.label_id = label.label_id)\
+            and (artist.name = '"+artist+"')")
+        return self.cursor.fetchall()
+
+    def search_by_genre(self, genre):
+        self.cursor.execute("select artist.name, album.name,\
+        album.year, genre.name, album.tracks,\
+        album.duration, label.name, artist.country\
+        from album, artist, genre, label\
+        where (album.artist_id = artist.artist_id)\
+            and (artist.genre_id = genre.genre_id)\
+            and (album.label_id = label.label_id)\
+            and (genre.name = '" + genre + "')")
+        return self.cursor.fetchall()
+
+    def search_by_year(self, frm, to):
+        self.cursor.execute("select artist.name, album.name,\
+        album.year, genre.name, album.tracks,\
+        album.duration, label.name, artist.country\
+        from album, artist, genre, label\
+        where (album.artist_id = artist.artist_id)\
+            and (artist.genre_id = genre.genre_id)\
+            and (album.label_id = label.label_id)\
+            and (album.year >= "+frm+") and (album.year <= "+to+")")
+        return self.cursor.fetchall()
+
+    def search_by_label(self, label):
+        self.cursor.execute("select artist.name, album.name,\
+        album.year, genre.name, album.tracks,\
+        album.duration, label.name, artist.country\
+        from album, artist, genre, label\
+        where (album.artist_id = artist.artist_id)\
+            and (artist.genre_id = genre.genre_id)\
+            and (album.label_id = label.label_id)\
+            and (label.name = '" + label + "')")
+        return self.cursor.fetchall()
+
+    def search_by_country(self, country):
+        self.cursor.execute("select artist.name, album.name,\
+        album.year, genre.name, album.tracks,\
+        album.duration, label.name, artist.country\
+        from album, artist, genre, label\
+        where (album.artist_id = artist.artist_id)\
+            and (artist.genre_id = genre.genre_id)\
+            and (album.label_id = label.label_id)\
+            and (artist.country = '" + country + "')")
         return self.cursor.fetchall()
 
     def get_genre_id(self, genre):
